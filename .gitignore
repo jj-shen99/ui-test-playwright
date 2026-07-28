@@ -1,0 +1,44 @@
+node_modules/
+dist/
+.env
+.env.local
+*.log
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+tests/fixtures/auth-state.json
+
+# app_tests (real-app E2E)
+app_tests/fixtures/auth-state.json
+app_tests/playwright-report/
+app_tests/test-results/
+app_tests/.env
+
+# Uploaded test specs are runtime artifacts (written by the API upload endpoint)
+app_tests/uploaded/*
+!app_tests/uploaded/.gitkeep
+
+# LLM drafts parked for human review (#22) — never auto-committed
+tests/.llm-review/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# Python ML service
+services/ml/__pycache__/
+services/ml/.venv/
+services/ml/*.egg-info/
+
+# Docker volumes
+env/data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

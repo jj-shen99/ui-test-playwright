@@ -1,0 +1,105 @@
+name: Nightly Full Suite
+
+on:
+  schedule:
+    - cron: "0 3 * * *" # 3:00 AM UTC daily
+  workflow_dispatch:
+    inputs:
+      grafana_version:
+        description: "Grafana version to test"
+        required: false
+        default: "11.4.0"
+
+jobs:
+  full-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        grafana_version:
+          - "11.4.0"
+          # Add more versions for cross-version matrix (FR-25)
+          # - "11.3.0"
+          # - "11.2.0"
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: grafana_test
+          POSTGRES_PASSWORD: grafana_test
+          POSTGRES_DB: grafana_ui_testing
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U grafana_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run DB migration
+        run: npx tsx db/migrate.ts
+        env:
+          DATABASE_URL: postgresql://grafana_test:grafana_test@localhost:5432/grafana_ui_testing
+
+      - name: Start deterministic environment (Grafana ${{ matrix.grafana_version }})
+        run: |
+          GRAFANA_VERSION=${{ matrix.grafana_version }} docker compose -f env/docker-compose.yml up -d victoriametrics grafana
+          npx tsx scripts/wait-for-services.ts
+
+      - name: Seed test data
+        run: npx tsx tests/fixtures/seed.ts
+
+      - name: Run full test suite
+        run: npx playwright test --reporter=json,html --shard=${{ strategy.job-index + 1 }}/${{ strategy.job-total }}
+        env:
+          GRAFANA_URL: http://localhost:3000
+          VM_URL: http://localhost:8428
+          STORE_RESULTS: "true"
+          COMMIT_SHA: ${{ github.sha }}
+          TRIGGER_SOURCE: nightly
+          GRAFANA_VERSION: ${{ matrix.grafana_version }}
+          DATABASE_URL: postgresql://grafana_test:grafana_test@localhost:5432/grafana_ui_testing
+
+      - name: Trigger ML analysis
+        if: always()
+        run: |
+          curl -s -X POST http://localhost:8000/analyze || echo "ML service not available"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.grafana_version }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Tear down environment
+        if: always()
+        run: docker compose -f env/docker-compose.yml down -v

@@ -1,0 +1,13 @@
+# Seed dataset for the deterministic test environment (§7.3)
+# Absolute timestamps: 2025-01-01T00:00:00Z to 2025-01-01T06:00:00Z
+# Epoch ms base: 1735689600000, interval: 15s = 15000ms
+# Metrics: test_cpu_usage, test_memory_usage_bytes, test_disk_io_bytes_total, test_network_bytes_total
+# Instances: host-a, host-b, host-c
+
+# CPU Usage (percent) — 3 instances, every 15 seconds for 6 hours = 1440 points each
+# Memory Usage (bytes) — 3 instances
+# Disk IO (counter, bytes) — 3 instances × 2 directions (read, write)
+# Network Traffic (counter, bytes) — 3 instances
+
+# Note: This file documents the seed schema. The actual data is generated
+# programmatically by seed.ts to produce consistent, deterministic time series.

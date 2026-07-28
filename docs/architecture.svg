@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1060" height="820" viewBox="0 0 1060 820" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowDash" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="1060" height="820" fill="#ffffff"/>
+  <text x="530" y="40" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">Grafana UI Testing Platform — Architecture</text>
+
+  <!-- ===== Tier bands ===== -->
+  <g>
+    <rect x="30" y="66" width="1000" height="90" rx="10" fill="#eff6ff"/>
+    <text x="46" y="84" font-size="12" font-weight="700" fill="#1d4ed8" letter-spacing="1">PRESENTATION</text>
+
+    <rect x="30" y="172" width="1000" height="90" rx="10" fill="#fff7ed"/>
+    <text x="46" y="190" font-size="12" font-weight="700" fill="#c2410c" letter-spacing="1">CONTROL PLANE</text>
+
+    <rect x="30" y="278" width="1000" height="128" rx="10" fill="#f1f5f9"/>
+    <text x="46" y="296" font-size="12" font-weight="700" fill="#475569" letter-spacing="1">STATE &amp; SERVICES</text>
+
+    <rect x="30" y="424" width="1000" height="120" rx="10" fill="#f5f3ff"/>
+    <text x="46" y="442" font-size="12" font-weight="700" fill="#6d28d9" letter-spacing="1">EXECUTION</text>
+
+    <rect x="30" y="562" width="1000" height="120" rx="10" fill="#fef2f2"/>
+    <text x="46" y="580" font-size="12" font-weight="700" fill="#b91c1c" letter-spacing="1">SYSTEM UNDER TEST</text>
+  </g>
+
+  <!-- ===== Presentation ===== -->
+  <g filter="url(#shadow)">
+    <rect x="420" y="90" width="220" height="56" rx="10" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5"/>
+  </g>
+  <text x="530" y="114" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">Frontend (React)</text>
+  <text x="530" y="133" text-anchor="middle" font-size="11" fill="#dbeafe">Vite · Tailwind · React Query · :6200</text>
+
+  <!-- ===== API ===== -->
+  <g filter="url(#shadow)">
+    <rect x="290" y="196" width="480" height="56" rx="10" fill="#f97316" stroke="#c2410c" stroke-width="1.5"/>
+  </g>
+  <text x="530" y="220" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">API Server (Fastify)</text>
+  <text x="530" y="239" text-anchor="middle" font-size="11" fill="#ffedd5">runs · tests · insights · generate · users · schedules · targets · audit · auth-profiles · :6199</text>
+
+  <!-- ===== State & Services ===== -->
+  <g filter="url(#shadow)">
+    <rect x="70" y="316" width="200" height="72" rx="10" fill="#0ea5e9" stroke="#0369a1" stroke-width="1.5"/>
+  </g>
+  <text x="170" y="348" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">PostgreSQL</text>
+  <text x="170" y="368" text-anchor="middle" font-size="11" fill="#e0f2fe">Drizzle ORM · :5432</text>
+
+  <g filter="url(#shadow)">
+    <rect x="310" y="316" width="200" height="72" rx="10" fill="#ef4444" stroke="#b91c1c" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="348" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Redis + BullMQ</text>
+  <text x="410" y="368" text-anchor="middle" font-size="11" fill="#fee2e2">job queue · :6379</text>
+
+  <g filter="url(#shadow)">
+    <rect x="550" y="316" width="200" height="72" rx="10" fill="#10b981" stroke="#047857" stroke-width="1.5"/>
+  </g>
+  <text x="650" y="348" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">MinIO</text>
+  <text x="650" y="368" text-anchor="middle" font-size="11" fill="#d1fae5">S3 artifacts · :9000</text>
+
+  <g filter="url(#shadow)">
+    <rect x="790" y="316" width="200" height="72" rx="10" fill="#ec4899" stroke="#be185d" stroke-width="1.5"/>
+  </g>
+  <text x="890" y="348" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">ML Service</text>
+  <text x="890" y="368" text-anchor="middle" font-size="11" fill="#fce7f3">FastAPI · flakiness · :8000</text>
+
+  <!-- ===== Execution ===== -->
+  <g filter="url(#shadow)">
+    <rect x="310" y="454" width="200" height="72" rx="10" fill="#8b5cf6" stroke="#6d28d9" stroke-width="1.5"/>
+  </g>
+  <text x="410" y="486" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Orchestrator</text>
+  <text x="410" y="506" text-anchor="middle" font-size="11" fill="#ede9fe">BullMQ worker</text>
+
+  <g filter="url(#shadow)">
+    <rect x="550" y="454" width="200" height="72" rx="10" fill="#6366f1" stroke="#4338ca" stroke-width="1.5"/>
+  </g>
+  <text x="650" y="486" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Playwright Runner</text>
+  <text x="650" y="506" text-anchor="middle" font-size="11" fill="#e0e7ff">traces · videos · screenshots</text>
+
+  <!-- ===== SUT ===== -->
+  <g filter="url(#shadow)">
+    <rect x="400" y="592" width="200" height="72" rx="10" fill="#f59e0b" stroke="#b45309" stroke-width="1.5"/>
+  </g>
+  <text x="500" y="624" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">Grafana (SUT)</text>
+  <text x="500" y="644" text-anchor="middle" font-size="11" fill="#fef3c7">dashboards · :3000</text>
+
+  <g filter="url(#shadow)">
+    <rect x="640" y="592" width="220" height="72" rx="10" fill="#06b6d4" stroke="#0e7490" stroke-width="1.5"/>
+  </g>
+  <text x="750" y="624" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">VictoriaMetrics</text>
+  <text x="750" y="644" text-anchor="middle" font-size="11" fill="#cffafe">time-series backend · :8428</text>
+
+  <!-- ===== Solid arrows ===== -->
+  <g stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrow)">
+    <!-- Frontend -> API -->
+    <path d="M530,146 L530,194"/>
+    <!-- API -> stores -->
+    <path d="M470,252 C400,280 260,286 190,314"/>
+    <path d="M510,252 C470,282 430,290 410,314"/>
+    <path d="M560,252 C600,282 630,290 650,314"/>
+    <path d="M620,252 C740,278 830,288 880,314"/>
+    <!-- Redis -> Orchestrator -->
+    <path d="M410,388 L410,452"/>
+    <!-- Orchestrator -> Playwright -->
+    <path d="M510,490 L548,490"/>
+    <!-- Playwright -> Grafana -->
+    <path d="M620,526 C560,556 540,566 520,590"/>
+    <!-- Grafana -> VictoriaMetrics -->
+    <path d="M600,628 L638,628"/>
+  </g>
+
+  <!-- ===== Dashed feedback arrows ===== -->
+  <g stroke="#94a3b8" stroke-width="1.8" fill="none" stroke-dasharray="5 4" marker-end="url(#arrowDash)">
+    <!-- Orchestrator -> Postgres (status) -->
+    <path d="M330,470 C250,430 210,410 185,390"/>
+    <!-- Orchestrator/Playwright -> MinIO (artifacts) -->
+    <path d="M690,454 C700,430 680,406 665,390"/>
+  </g>
+
+  <!-- ===== Edge labels ===== -->
+  <g font-size="11" fill="#334155" font-weight="600">
+    <rect x="536" y="160" width="46" height="16" rx="8" fill="#ffffff"/>
+    <text x="559" y="172" text-anchor="middle">/api/*</text>
+
+    <rect x="382" y="412" width="56" height="16" rx="8" fill="#ffffff"/>
+    <text x="410" y="424" text-anchor="middle">jobs</text>
+
+    <rect x="498" y="474" width="58" height="16" rx="8" fill="#ffffff"/>
+    <text x="527" y="486" text-anchor="middle">spawns</text>
+
+    <rect x="520" y="556" width="66" height="16" rx="8" fill="#ffffff"/>
+    <text x="553" y="568" text-anchor="middle">drives UI</text>
+
+    <rect x="588" y="612" width="60" height="16" rx="8" fill="#ffffff"/>
+    <text x="618" y="624" text-anchor="middle">queries</text>
+  </g>
+  <g font-size="10.5" fill="#64748b" font-weight="600" font-style="italic">
+    <text x="238" y="438" text-anchor="middle">status updates</text>
+    <text x="726" y="430" text-anchor="middle">artifacts</text>
+  </g>
+
+  <!-- ===== Legend ===== -->
+  <g font-size="11" fill="#475569">
+    <rect x="40" y="712" width="980" height="86" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+    <text x="56" y="732" font-size="12" font-weight="700" fill="#0f172a">Legend</text>
+
+    <line x1="56" y1="752" x2="86" y2="752" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="94" y="756">request / control flow</text>
+
+    <line x1="260" y1="752" x2="290" y2="752" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="5 4" marker-end="url(#arrowDash)"/>
+    <text x="298" y="756">async write-back (status / artifacts)</text>
+
+    <rect x="56" y="770" width="16" height="12" rx="3" fill="#3b82f6"/><text x="80" y="780">Frontend</text>
+    <rect x="160" y="770" width="16" height="12" rx="3" fill="#f97316"/><text x="184" y="780">API</text>
+    <rect x="240" y="770" width="16" height="12" rx="3" fill="#8b5cf6"/><text x="264" y="780">Orchestration</text>
+    <rect x="372" y="770" width="16" height="12" rx="3" fill="#10b981"/><text x="396" y="780">Data / storage</text>
+    <rect x="500" y="770" width="16" height="12" rx="3" fill="#ec4899"/><text x="524" y="780">ML</text>
+    <rect x="560" y="770" width="16" height="12" rx="3" fill="#f59e0b"/><text x="584" y="780">System under test</text>
+  </g>
+</svg>

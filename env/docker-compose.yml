@@ -1,0 +1,86 @@
+version: "3.9"
+
+services:
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:v1.106.1
+    ports:
+      - "8428:8428"
+    command:
+      - "-retentionPeriod=10y"
+      - "-search.latencyOffset=0s"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8428/-/healthy"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/files/sample-dashboard.json
+    volumes:
+      - ./provisioning:/etc/grafana/provisioning
+    depends_on:
+      victoriametrics:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: grafana_test
+      POSTGRES_PASSWORD: grafana_test
+      POSTGRES_DB: grafana_ui_testing
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grafana_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 minioadmin minioadmin &&
+        mc mb local/test-artifacts --ignore-existing &&
+        mc anonymous set download local/test-artifacts
+      "
